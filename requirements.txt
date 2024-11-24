@@ -1,0 +1,6 @@
+pandas
+sqlalchemy
+pyodbc
+elasticsearch
+PyYAML
+cx_Oracle

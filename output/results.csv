@@ -1,0 +1,4 @@
+success,rule,details,check
+True,,Null count: 0,Non-null check on col1
+True,Compare record counts between source CSV and Elasticsearch target,"Source count: 1, Target count: 1",
+True,Compare 'amount' field by 'id',Mismatched rows: 0,

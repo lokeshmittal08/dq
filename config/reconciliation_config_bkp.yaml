@@ -1,0 +1,77 @@
+sources:
+  source_csv:
+    type: "csv"
+    filepath: "/app/source_file.csv"  # Filepath for source CSV
+    delimiter: "," 
+  source_db:
+    type: "sql_server"
+    connection_string: "mssql+pyodbc://user:password@DSN"
+    query: "SELECT id, amount, status FROM source_table"
+
+targets:
+  target_elastic:
+    type: "elasticsearch"
+    host: "http://localhost:9200"
+    index: "target_index"
+  target_csv:
+    type: "csv"
+    filepath: "/app/target_file.csv"  # Filepath for target CSV
+    delimiter: "|"     
+
+data_quality:
+  - name: "check_target_index_amount"
+    target: "target_csv"
+    target_type: "csv"
+  #   query: >
+  #     {
+  #       "bool": {
+  #         "must": [
+  #           { "range": { "amount": { "gte": 1000, "lte": 5000 } } },
+  #           { "term": { "status": "active" } }
+  #         ]
+  #       }
+  #     }
+    checks:
+      - type: "non_null"
+        column: "col1"
+  #     - type: "range"
+  #       column: "amount"
+  #       min: 1000
+  #       max: 5000
+
+reconciliation:
+  - name: "source_csv_to_target_elastic"
+    source: "source_csv"
+    target: "target_csv"
+    source_delimiter: ","
+    target_delimiter: "|"
+    rules:
+      - type: "aggregate"
+        description: "Compare record counts between source CSV and Elasticsearch target"
+        tolerance: 0
+      - type: "field_comparison"
+        description: "Compare 'amount' field by 'id'"
+        key_column: "id"
+        fields: ["amount"]
+
+  # - name: "source_to_target_reconciliation"
+  #   source: "source_db"
+  #   target: "target_elastic"
+  #   target_query: >
+  #     {
+  #       "bool": {
+  #         "must_not": { "term": { "status": "inactive" } }
+  #       }
+  #     }
+  #   rules:
+  #     - type: "aggregate"
+  #       description: "Compare record counts between source and target"
+  #       tolerance: 0
+  #     - type: "field_comparison"
+  #       description: "Compare 'amount' field by 'id'"
+  #       key_column: "id"
+  #       fields: ["amount"]
+
+output:
+  logs: "/app/logs/framework.log"
+  results: "/app/output/results.csv"

@@ -1,0 +1,42 @@
+sources:
+  source_csv:
+    type: "csv"
+    filepath: "/app/data/source.csv"  # Filepath for source CSV
+    delimiter: "," 
+
+
+targets:
+  target_csv:
+    type: "csv"
+    filepath: "/app/data/target.csv"  # Filepath for target CSV
+    delimiter: ","     
+
+data_quality:
+  - name: "check_target_index_amount"
+    target: "target_csv"
+    target_type: "csv"
+    checks:
+      - type: "non_null"
+        column: "col1"
+      - type: "expect_column_values_to_not_be_null"
+        column: '{"column": "col1"}'
+
+
+reconciliation:
+  - name: "source_csv_to_target_elastic"
+    source: "source_csv"
+    target: "target_csv"         
+    source_delimiter: ","
+    target_delimiter: ","
+    rules:
+      - type: "aggregate"
+        description: "Compare record counts between source CSV and Elasticsearch target"
+        tolerance: 0
+      - type: "field_comparison"
+        description: "Compare 'amount' field by 'id'"
+        key_column: "col1"
+        fields: ["col2"]
+
+output:
+  logs: "/app/logs/framework.log"
+  results: "/app/output/results.csv"
