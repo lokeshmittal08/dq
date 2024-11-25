@@ -1,0 +1,2 @@
+
+docker run -d -v "C:\Users\Lokesh\Desktop\Supports\Hemanth\New Project\dq/logs:/app/logs" -v "C:\Users\Lokesh\Desktop\Supports\Hemanth\New Project\dq/output:/app/output" -v "C:\Users\Lokesh\Desktop\Supports\Hemanth\New Project\dq/config:/app/config" -v "C:\Users\Lokesh\Desktop\Supports\Hemanth\New Project\dq/data:/app/data" -v "C:\Users\Lokesh\Desktop\Supports\Hemanth\New Project\dq/framework:/app/framework" -v "C:\Users\Lokesh\Desktop\Supports\Hemanth\New Project\dq/:/app/" dq
